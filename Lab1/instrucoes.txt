@@ -1,0 +1,6 @@
+Instrucoes:
+
+1. Compile socket-client and socket-server using the command "mvn compile";
+2. You can change the arguments of the server and client changing the pom.xml file respectively;
+2. Run socket-server with the command "mvn exec:java";
+3. Run socket-client with the command "mvn exec:java";
