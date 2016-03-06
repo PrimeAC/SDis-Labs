@@ -1,0 +1,3 @@
+2-a)Diferença de portos nos ficheiros pom.xml
+b)illegalArgumentException devido ao valor do porto selecionado no pom.xml do servidor, acima do valor existente
+c)na linha do create newSocket, linha 32, pois o cliente tentava criar um socket para um porto diferente do do servidor 
