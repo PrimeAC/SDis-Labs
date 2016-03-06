@@ -18,6 +18,8 @@ static int numPlays = 0;
 /* Mutex */
 static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
+int  altera=0;
+
 /* ********** */
 
 void currentBoard(char *buffer) {
@@ -52,8 +54,12 @@ int play(int row, int column, int player) {
         pthread_mutex_unlock(&mutex);
         return 4;
     }
-
-    board[row][column] = (player == 1) ? 'X' : 'O';  /* Insert player symbol   */
+    if(altera==0) {
+        board[row][column] = (player == 1) ? 'X' : 'O';  /* Insert player symbol   */
+    }
+    else {
+        board[row][column] = (player == 1) ? 'O' : 'X';  /* Insert player symbol   */
+    }
     nextPlayer = (nextPlayer + 1) % 2;
     numPlays ++;
     pthread_mutex_unlock(&mutex);
@@ -108,8 +114,8 @@ int checkWinner() {
     return result; 
 }
 
-void trocaSimbolos() {
-    int i, j;
+int trocasimbolos() {
+	int i,j;
     for (i=0; i<3; i++) {
         for (j=0; j<3;j++) {
             if (board[i][j]=='X') {
@@ -120,6 +126,11 @@ void trocaSimbolos() {
             }
         }
     }
-    board[row][column] = (player == 1) ? 'O' : 'X';  /* Insert player symbol   */
-
+    if(altera==0){
+    	altera=1;
+    }
+    else {
+    	altera=0;
+    }
+    return 0;
 }

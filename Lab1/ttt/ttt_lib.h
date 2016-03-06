@@ -6,6 +6,6 @@
 void currentBoard(char *buffer);
 int play(int row, int column, int player);
 int checkWinner();
-void trocaSimbolos();
+int trocasimbolos();
 
 #endif

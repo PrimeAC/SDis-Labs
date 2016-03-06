@@ -1,7 +1,0 @@
-Instructions:
-
-A funcionalidade pedida foi parcialmente implementada.
-
-1) Para compliar corra o comando 'make';
-2)Para executar o comando do servidor corra o comando './ttt_server &';
-3)Para executar o comando do cliente corra o comando './ttt_client localhost';

@@ -37,3 +37,13 @@ checkwinner_1_svc(void *argp, struct svc_req *rqstp)
 
 	return &result;
 }
+
+int *
+trocasimbolos_1_svc(void *argp, struct svc_req *rqstp)
+{
+	static int  result;
+
+	result=trocasimbolos();
+
+	return &result;
+}

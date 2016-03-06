@@ -1,9 +1,0 @@
-2. Para proteger as variáveis partilhadas nomeadamente o valor das posições do tabuleiro.
-
-4.a)ttt_xdr.c
-  b)ttt_clnt.c
-  c)servidor - ttt_svc.c, ttt_server.c
-    cliente - ttt_clnt.c, ttt_client.c
-    ambos - ttt_xdr.c
-  d) ttt_server.c, ttt_client.c
-  e) UDP

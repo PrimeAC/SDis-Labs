@@ -17,8 +17,9 @@ ttt_1(char *host)
 	play_args  play_1_arg;
 	int  *result_3;
 	char *checkwinner_1_arg;
+	char *trocasimbolos_1_arg;
 
-	int player = 0;                              /* Player number - 0 or 1               */
+	int player = 0, altera=0;                              /* Player number - 0 or 1               */
   int go = 0;                                  /* Square selection number for turn     */
   int row = 0;                                 /* Row index for a square               */  
   int column = 0;                              /* Column index for a square            */
@@ -56,8 +57,14 @@ ttt_1(char *host)
       
       printf("%s\n", *currentboard_1((void*)&currentboard_1_arg, clnt));
       
-      printf("\nPlayer %d, please enter the number of the square "
+      if (altera==0){
+      	printf("\nPlayer %d, please enter the number of the square "
 	     "where you want to place your %c (or 0 to refresh the board): ", player,(player==1)?'X':'O');
+      }
+      else {
+      	printf("\nPlayer %d, please enter the number of the square "
+	     "where you want to place your %c (or 0 to refresh the board): ", player,(player==1)?'O':'X');
+      }
       scanf(" %d", &go);
 
       if (go == 0){
@@ -67,12 +74,20 @@ ttt_1(char *host)
 
       if (go == 10) {
       	printf("SYMBOLS CHANGED!\n" );
-      	printf("\nPlayer %d, please enter the number of the square "
-	     "where you want to place your %c (or 0 to refresh the board): ", player,(player==1)?'O':'X');
-      scanf(" %d", &go);
+      	play_res=10;
+      	
+	    
 
-      trocaSimbolos();
-  		}
+	    trocasimbolos_1((void*)&trocasimbolos_1_arg, clnt);
+	    if (altera==1){
+	   		altera=0;
+	   	}
+	    else {
+	   		altera=1;	
+		}
+		continue; 
+      }
+  		
 
       row = --go/3;                                 /* Get row index of square      */
       column = go%3;                                /* Get column index of square   */

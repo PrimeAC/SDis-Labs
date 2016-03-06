@@ -1,6 +1,6 @@
 Instructions:
 
-A funcionalidade pedida foi parcialmente implementada.
+A funcionalidade pedida foi totalmente implementada.
 
 1) Para compliar corra o comando 'make';
 2)Para executar o comando do servidor corra o comando './ttt_server &';
