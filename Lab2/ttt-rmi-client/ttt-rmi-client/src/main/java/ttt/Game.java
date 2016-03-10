@@ -48,6 +48,7 @@ public class Game {
 		}
 
 		public void congratulate() throws RemoteException{
+			System.out.println(ttt.currentBoard());
 			if (winner == 2)
 				System.out.printf("\nHow boring, it is a draw\n");
 			else
