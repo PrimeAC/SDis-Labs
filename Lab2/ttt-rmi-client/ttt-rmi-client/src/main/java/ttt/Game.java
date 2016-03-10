@@ -66,7 +66,8 @@ public class Game {
 			Game g = new Game();
 			g.playGame();
 			g.congratulate();
-		
+			System.exit(0);
+
 		} catch (RemoteException e) {
 			System.out.println("currentBoard: " + e.getMessage());
 		} catch (Exception e) {
