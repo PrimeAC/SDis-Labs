@@ -2,6 +2,7 @@ package ttt;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.*;
 
 public class TTT extends UnicastRemoteObject implements TTTService{
 	char board[][] = {
@@ -85,5 +86,27 @@ public class TTT extends UnicastRemoteObject implements TTTService{
     	  	else
     	  		return -1; /* Game is not over yet */
 	}
+
+    public void playRandom() {
+    
+        int i, j, spot, k=1, n=0;
+        int[] positions=new int [9];
+        Random random = new Random();
+
+        for (i=0;i<3;i++) {
+            for (j=0; j<3; j++) {
+                if(board[i][j]==(char) (48+k)) {
+                    positions[n++]=k;
+                }
+                k++;
+            }
+        }
+
+        spot=random.nextInt(n);
+        this.play( --positions[spot] / 3, positions[spot] % 3, nextPlayer);
+
+
+    }
+
 
 }

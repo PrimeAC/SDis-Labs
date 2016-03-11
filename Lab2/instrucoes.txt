@@ -1,0 +1,10 @@
+instruçoes:
+
+A funcionalidade pedida foi totalmente implementada.
+
+1.Para correr primeiro tem de se fazer mvn compile no servidor.
+2.De seguida fazer o mvn install no servidor.
+3.Executar os memsos comandos no cliente. 
+4.Por fim executam-se so segunites comandos :
+	/target/appassembler/bim/ttt-rmi-server no servidor 
+	e /target/appassembler/bim/ttt-rmi-client no cliente.
