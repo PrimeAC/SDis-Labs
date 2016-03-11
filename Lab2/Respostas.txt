@@ -1,0 +1,8 @@
+Respostas
+
+4.
+	i)O cliente gera um proxy (stub) que atua como objeto local , o servidor gera um skeleton (stub) que converte os parâmetros do pedido e  gera um Dispatcher e implementam os dois a interface.
+
+	ii) Cliente -> Game.java
+		Servidor -> TTT.java , TTTServer.java
+		Ambos -> TTTService.java

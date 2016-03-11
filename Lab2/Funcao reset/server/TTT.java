@@ -86,4 +86,18 @@ public class TTT extends UnicastRemoteObject implements TTTService{
     	  		return -1; /* Game is not over yet */
 	}
 
+    public void resetGame() {
+        int i, j, k=1;
+
+
+        for (i=0;i<3;i++) {
+            for (j=0; j<3; j++) {
+                board[i][j]=Integer.toString(k).charAt(0);
+                k++;
+            }
+        }
+        numPlays=0;
+        nextPlayer=0;
+    }
+
 }
