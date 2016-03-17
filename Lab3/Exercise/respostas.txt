@@ -1,0 +1,22 @@
+1)
+Sim é possível.
+
+2)
+Os tipos de dados dos argumentos são descritos com esquemas XSD
+
+3
+a)
+O WSDL e o ttt.x têm em comum a interface com que comunicam e os seus métodos, nomeadamente checkWinner, play e currentBoard.
+
+b)
+O tipo de argumento que as funcoes recebem: no WSDL qualquer tipo serve, ao invés do .x em que se precisava de criar a estrutura (play_args) que junta os argumentos necessarios.
+ 	
+4)
+CheckWinner.java - Envia o pedido de verificação do vencedor do jogo do cliente para o servidor
+CheckWinnerResponse.java - Envia a resposta de verificação do vencedor do servidor para o cliente
+CurrentBoard.java - Envia o pedido de verificação do estado do tabuleiro do cliente para o servidor
+CurrentBoardResponse.java - Envia a resposta de verificação do estado do tabuleiro do servidor para o cliente
+Play.java - Envia o pedido de verificação de jogada do cliente para o servidor
+PlayResponse.java - Envia a resposta de verificação de jogada do servidor para o cliente
+TTT.java - Definição dos Web Methods implementados
+TTTImplService.java - Definição dos Web Services implementados
