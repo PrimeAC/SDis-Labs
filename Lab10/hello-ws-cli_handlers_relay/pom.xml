@@ -54,6 +54,9 @@
                     <wsdlUrls>
                         <wsdlUrl>${wsdl.url}</wsdlUrl>
                     </wsdlUrls>
+                    <bindingFiles>
+                    	<bindingFile>${basedir}/src/jaxws/hello_handler-chain-binding.xml</bindingFile>
+                    </bindingFiles>
                 </configuration>
                 <dependencies>
                     <dependency>
