@@ -48,6 +48,7 @@ public class RelayClientHandler implements SOAPHandler<SOAPMessageContext> {
 	public static final String TOKEN = "client-handler";
 
 	public boolean handleMessage(SOAPMessageContext smc) {
+		System.out.println(" agdgfiuhsddjvljj "+CLASS_NAME);
 		Boolean outbound = (Boolean) smc.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 		if (outbound) {
 			// outbound message
