@@ -1,6 +1,7 @@
 package example.ws.handler;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
 import javax.xml.namespace.QName;
@@ -37,6 +38,8 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.util.Collection;
+import java.util.HashMap;
+
 import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
 import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 
@@ -66,9 +69,8 @@ public class SignatureHandler implements SOAPHandler<SOAPMessageContext> {
 	final static String KEY_ALIAS = "example";
 	final static String KEY_PASSWORD = "1nsecure";
 	
-	//public static final String RESPONSE_PROPERTY = "my.response.property";
-    //public static final String REQUEST_PROPERTY = "my.request.property";
-	public static String CONTEXT_PROPERTY = "my.property";
+	public static String CONTEXT_PROPERTY;
+	private Map<String, Certificate> certificates = new HashMap<>();
     
 	public static final String REQUEST_HEADER = "myRequestHeader";
 	public static final String REQUEST_NS = "urn:example";
@@ -89,8 +91,8 @@ public class SignatureHandler implements SOAPHandler<SOAPMessageContext> {
         try {
             if (outboundElement.booleanValue()) { //Outbound message
             	
-            	String propertyValue = (String) smc.get(CONTEXT_PROPERTY);
-            	System.out.println("QUEM SOU1: "+propertyValue);
+            	String propertyValue = CONTEXT_PROPERTY;
+            	System.out.println("QUEM SOU1: "+CONTEXT_PROPERTY);
             	SOAPMessage msg = smc.getMessage();
 				SOAPPart sp = msg.getSOAPPart();
 				SOAPEnvelope se = sp.getEnvelope();
@@ -119,6 +121,7 @@ public class SignatureHandler implements SOAPHandler<SOAPMessageContext> {
                 Name name1 = se.createName(REQUEST_HEADER, "e", REQUEST_NS);
 				SOAPHeaderElement element1 = sh.addHeaderElement(name1);
 				element1.addTextNode(propertyValue);
+				System.out.println("Escrevi na header "+propertyValue);
                 
                 // make digital signature
                 System.out.println("Signing ...");
@@ -137,8 +140,8 @@ public class SignatureHandler implements SOAPHandler<SOAPMessageContext> {
 				
             } else { //Inbound message
             	
-            	String myValue = (String) smc.get(CONTEXT_PROPERTY);
-            	System.out.println("QUEM SOU2: "+myValue);
+            	String myValue = CONTEXT_PROPERTY;
+            	System.out.println("QUEM SOU2: "+CONTEXT_PROPERTY);
             	SOAPMessage msg = smc.getMessage();
 				SOAPPart sp = msg.getSOAPPart();
 				SOAPEnvelope se = sp.getEnvelope();
@@ -193,24 +196,30 @@ public class SignatureHandler implements SOAPHandler<SOAPMessageContext> {
             	File f = new File(".");
         		System.out.println(f.getAbsolutePath());
         		
-        		CaClient ca = new CaClient();
-        		System.out.println("passei aqui");
-        		System.out.println(ca.sayHello("Ola"));
-        		
-        		ByteArrayInputStream bis = new ByteArrayInputStream(ca.getCertificates(propertyValue));
-        		ObjectInput in = null;
-        		in = new ObjectInputStream(bis);
-        		Certificate certificate = (Certificate) in.readObject();
-        		System.out.println(certificate);
-        		
-        		KeyStore keystore = readKeystoreFile(myValue + ".jks", KEYSTORE_PASSWORD.toCharArray());
-        		Certificate caCertificate = keystore.getCertificate(myValue);
-        		PublicKey caPublicKey = caCertificate.getPublicKey();
+        		Certificate certificate;
+        		if(certificates.containsKey(propertyValue)){
+        			certificate = certificates.get(propertyValue);
+        		}
+        		else{
+        			CaClient ca = new CaClient();
+            		System.out.println("passei aqui");
+            		System.out.println(ca.sayHello("Ola"));
+            		
+            		ByteArrayInputStream bis = new ByteArrayInputStream(ca.getCertificates(propertyValue));
+            		ObjectInput in = null;
+            		in = new ObjectInputStream(bis);
+            		certificate = (Certificate) in.readObject();
+            		//System.out.println(certificate);
+            		KeyStore keystore = readKeystoreFile(myValue + ".jks", KEYSTORE_PASSWORD.toCharArray());
+            		Certificate caCertificate = keystore.getCertificate(myValue);
+            		PublicKey caPublicKey = caCertificate.getPublicKey();
 
-        		if (verifySignedCertificate(certificate, caPublicKey)) {
-        			System.out.println("The signed certificate is valid");
-        		} else {
-        			System.err.println("The signed certificate is not valid");
+            		if (verifySignedCertificate(certificate, caPublicKey)) {
+            			certificates.put(propertyValue, certificate);
+            			System.out.println("The signed certificate is valid");
+            		} else {
+            			System.err.println("The signed certificate is not valid");
+            		}
         		}
         		
                 PublicKey publicKey = certificate.getPublicKey();

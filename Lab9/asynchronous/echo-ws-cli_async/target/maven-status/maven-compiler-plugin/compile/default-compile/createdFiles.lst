@@ -1,0 +1,12 @@
+example/ws/EchoResponse.class
+example/ws/Echo_Type.class
+example/ws/Echo.class
+example/ws/FastEcho.class
+example/ws/package-info.class
+example/ws/FastEchoResponse.class
+example/ws/cli/EchoClientMain.class
+example/ws/EchoException.class
+example/ws/cli/EchoClientMain$1.class
+example/ws/ObjectFactory.class
+example/ws/EchoImplService.class
+example/ws/EchoException_Exception.class
