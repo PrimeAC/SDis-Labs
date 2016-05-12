@@ -1,8 +1,11 @@
 package example.ws.handler;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
@@ -37,6 +40,7 @@ import java.security.cert.CertificateFactory;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Signature;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -74,6 +78,8 @@ public class SignatureHandler implements SOAPHandler<SOAPMessageContext> {
     
 	public static final String REQUEST_HEADER = "myRequestHeader";
 	public static final String REQUEST_NS = "urn:example";
+	
+	private List<String> ids = new ArrayList<>();
 
     //
     // Handler interface methods
@@ -91,8 +97,9 @@ public class SignatureHandler implements SOAPHandler<SOAPMessageContext> {
         try {
             if (outboundElement.booleanValue()) { //Outbound message
             	
+            	UUID id = UUID.randomUUID();
+            	
             	String propertyValue = CONTEXT_PROPERTY;
-            	System.out.println("QUEM SOU1: "+CONTEXT_PROPERTY);
             	SOAPMessage msg = smc.getMessage();
 				SOAPPart sp = msg.getSOAPPart();
 				SOAPEnvelope se = sp.getEnvelope();
@@ -102,6 +109,13 @@ public class SignatureHandler implements SOAPHandler<SOAPMessageContext> {
 					System.out.println("Body not found.");
 					return true;
 				}
+				
+				final byte[] idBytes = id.toString().getBytes();
+				
+				// make digital signature
+                System.out.println("Signing ...");
+                byte[] digitalSignature1 = makeDigitalSignature(idBytes, getPrivateKeyFromKeystore(propertyValue+".jks",
+                        KEYSTORE_PASSWORD.toCharArray(), propertyValue, KEY_PASSWORD.toCharArray()));
 				
                 final String messageBody = mb.toString();
                 final byte[] plainBytes = messageBody.getBytes();
@@ -137,11 +151,22 @@ public class SignatureHandler implements SOAPHandler<SOAPMessageContext> {
                 String valueString = printBase64Binary(digitalSignature);
                 element.addTextNode(valueString);
                 
+                // add header element (name, namespace prefix, namespace)
+                Name name2 = se.createName("myid", "a", "http://id");
+				SOAPHeaderElement element2 = sh.addHeaderElement(name2);
+				element2.addTextNode(id.toString());
+				
+			
+				// add header element (name, namespace prefix, namespace)
+                Name name4 = se.createName("myDigId", "r", "http://digId");
+                SOAPHeaderElement element4 = sh.addHeaderElement(name4);
+                String valueString4 = printBase64Binary(digitalSignature1);
+                element4.addTextNode(valueString4);
+                
 				
             } else { //Inbound message
             	
             	String myValue = CONTEXT_PROPERTY;
-            	System.out.println("QUEM SOU2: "+CONTEXT_PROPERTY);
             	SOAPMessage msg = smc.getMessage();
 				SOAPPart sp = msg.getSOAPPart();
 				SOAPEnvelope se = sp.getEnvelope();
@@ -170,7 +195,6 @@ public class SignatureHandler implements SOAPHandler<SOAPMessageContext> {
 
 				// get header element value
 				String propertyValue = element.getValue();
-				System.out.println("remetente: "+propertyValue);
                 
                 name = se.createName("myHeader", "d", "http://demo");
                 it = sh.getChildElements(name);
@@ -182,7 +206,35 @@ public class SignatureHandler implements SOAPHandler<SOAPMessageContext> {
                 element = (SOAPElement) it.next();
 				String valueString = element.getValue();
 				
+				name = se.createName("myid", "a", "http://id");
+                it = sh.getChildElements(name);
+                if (!it.hasNext()) {
+                    System.out.println("Header element not found.");
+                    return true;
+                }
+                
+				element =(SOAPElement) it.next();
+				//get header element value
+				String id = element.getValue();
+				
+				
+				Name name4 = se.createName("myDigId", "r", "http://digId");
+                it = sh.getChildElements(name4);
+                if (!it.hasNext()) {
+                    System.out.println("Header element not found.");
+                    return true;
+                }
+                
+                element = (SOAPElement) it.next();
+                // get header element value
+				String valueString1 = element.getValue();
+				
+				
 				byte[] digitalSignature = parseBase64Binary(valueString);
+				
+				byte[] digitalSignatureId= parseBase64Binary(valueString1);
+				
+				final byte[] idBytes =id.getBytes();
 				
                 final String messageBody = mb.toString();
                 final byte[] plainBytes = messageBody.getBytes();
@@ -228,12 +280,27 @@ public class SignatureHandler implements SOAPHandler<SOAPMessageContext> {
                 System.out.println("Verifying ...");
                
                 boolean isValid = verifyDigitalSignature(digitalSignature, plainBytes, publicKey);
+                
+                boolean isIdValid = verifyDigitalSignature(digitalSignatureId, idBytes, publicKey);
 
                 if (isValid) {
                     System.out.println("The digital signature is valid");
                 } else {
                     System.out.println("The digital signature is NOT valid");
                 }
+                
+                if (isIdValid) {
+                    System.out.println("The digital signature ID is valid");
+                    if(ids.contains(id)) {
+    					return true;
+    				}
+    				else {
+    					ids.add(id);
+    				}
+                } else {
+                    System.out.println("The digital signature ID is NOT valid");
+                }
+                
             }
         } catch (Exception e) {
             System.out.print("Caught exception in handleMessage: ");
